@@ -1,0 +1,688 @@
+<style>
+body{
+	background-color: #4C5C68;
+}
+div {
+    padding-bottom: 2.4cm;
+}
+
+.button {
+    background-color: #1985A1;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+.slidecontainer {
+	margin: auto;
+    width: 100%;
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 33%;
+    height: 15px;
+    border-radius: 5px;
+    background: #DCDCDD;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #1985A1;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #1985A1;
+    cursor: pointer;
+}
+
+#formatDIV {
+    width: 50%;
+    text-align: center;
+    background-color: white;
+	margin: auto;
+    padding: 10px;
+}
+</style>
+<script src="C:\Users\IGaio\node_modules\chart.js\dist\Chart.js"></script>
+</head>
+<body>
+<div id="formatDIV">
+	<div align="center" style="color:#4C5C68">
+		<h1 style="color:#1985A1">Stock Diversification Visualized</h1>
+		<p>In finnance, diversification is a tool used to reduce risk and raise value in stored assets. </p>
+		<p>Diversification is done by spreading your assets out amongst many forms instead of putting all your money in one place. </p>
+		<p>When you invest in stocks you can diversify by investing in a group of stocks rather than just a handful you think will perform.</p> 
+		<p>The graph below displays how 10,000 dollars would perform invested in stocks vs an index over the past 5 years.</p>
+		<p>Hit apply to add more stocks to the chart. </p> 
+	</div>
+	<div class="""slidecontainer" align="center">
+		<p style="color:#46494C">Stocks: <span id="stockSliderSize"></span></p>
+		<input type="range" min="1" max="10" value="1" class="slider" id="myRange">
+		<button class="button" id="applyButton">Apply</button>
+	</div>
+
+	<div  align="center" >
+			<canvas id="line-chart" width="800" height="600" ></canvas>
+	</div>
+</div>
+
+
+<script>
+//slider
+var slider = document.getElementById("myRange");
+var outputSlide = document.getElementById("stockSliderSize");
+outputSlide.innerHTML = slider.value;
+
+
+
+//stocks
+var companies = ["placeholder"];
+var tickers = [
+"mmm", 
+"abt",
+"abbv",
+"abmd",
+"acn",
+"atvi",
+"adbe",
+"amd",
+"aap",
+"aes",
+"aet",
+"amg",
+"afl",
+"a",
+"apd",
+"akam",
+"alk",
+"alb",
+"are",
+"alxn",
+"algn",
+"alle",
+"agn",
+"ads",
+"lnt",
+"all",
+"googl",
+"goog",
+"mo",
+"amzn",
+"aee",
+"aal",
+"aep",
+"axp",
+"aig",
+"amt",
+"awk",
+"amp",
+"abc",
+"ame",
+"amgn",
+"aph",
+"apc",
+"adi",
+"andv",
+"anss",
+"antm",
+"aon",
+"aos",
+"apa",
+"aiv",
+"aapl",
+"amat",
+"aptv",
+"adm",
+"arnc",
+"ajg",
+"aiz",
+"t",
+"adsk",
+"adp",
+"azo",
+"avb",
+"avy",
+"bhge",
+"bll",
+"bac",
+"bk",
+"bax",
+"bbt",
+"bdx",
+"brk.b",
+"bby",
+"biib",
+"blk",
+"hrb",
+"ba",
+"bkng",
+"bwa",
+"bxp",
+"bsx",
+"bhf",
+"bmy",
+"avgo",
+"br",
+"bf.b",
+"chrw",
+"ca",
+"cog",
+"cdns",
+"cpb",
+"cof",
+"cah",
+"kmx",
+"ccl",
+"cat",
+"cboe",
+"cbre",
+"cbs",
+"celg",
+"cnc",
+"cnp",
+"ctl",
+"cern",
+"cf",
+"schw",
+"chtr",
+"cvx",
+"cmg",
+"cb",
+"chd",
+"ci",
+"xec",
+"cinf",
+"ctas",
+"csco",
+"c",
+"cfg",
+"ctxs",
+"clx",
+"cme",
+"cms",
+"ko",
+"ctsh",
+"cl",
+"cmcsa",
+"cma",
+"cag",
+"cxo",
+"cop",
+"ed",
+"stz",
+"coo",
+"cprt",
+"glw",
+"cost",
+"coty",
+"cci",
+"csx",
+"cmi",
+"cvs",
+"dhi",
+"dhr",
+"dri",
+"dva",
+"de",
+"dal",
+"xray",
+"dvn",
+"dlr",
+"dfs",
+"disca",
+"disck",
+"dish",
+"dg",
+"dltr",
+"d",
+"dov",
+"dwdp",
+"dte",
+"dre",
+"duk",
+"dxc",
+"etfc",
+"emn",
+"etn",
+"ebay",
+"ecl",
+"eix",
+"ew",
+"ea",
+"emr",
+"etr",
+"evhc",
+"eog",
+"eqt",
+"efx",
+"eqix",
+"eqr",
+"ess",
+"el",
+"evrg",
+"es",
+"re",
+"exc",
+"expe",
+"expd",
+"esrx",
+"exr",
+"xom",
+"ffiv",
+"fb",
+"fast",
+"frt",
+"fdx",
+"fis",
+"fitb",
+"fe",
+"fisv",
+"flt",
+"flir",
+"fls",
+"flr",
+"fmc",
+"fl",
+"f",
+"ftv",
+"fbhs",
+"ben",
+"fcx",
+"gps",
+"grmn",
+"it",
+"gd",
+"ge",
+"ggp",
+"gis",
+"gm",
+"gpc",
+"gild",
+"gpn",
+"gs",
+"gt",
+"gww",
+"hal",
+"hbi",
+"hog",
+"hrs",
+"hig",
+"has",
+"hca",
+"hcp",
+"hp",
+"hsic",
+"hsy",
+"hes",
+"hpe",
+"hlt",
+"hfc",
+"holx",
+"hd",
+"hon",
+"hrl",
+"hst",
+"hpq",
+"hum",
+"hban",
+"hii",
+"idxx",
+"info",
+"itw",
+"ilmn",
+"ir",
+"intc",
+"ice",
+"ibm",
+"incy",
+"ip",
+"ipg",
+"iff",
+"intu",
+"isrg",
+"ivz",
+"ipgp",
+"iqv",
+"irm",
+"jec",
+"jbht",
+"jef",
+"sjm",
+"jnj",
+"jci",
+"jpm",
+"jnpr",
+"ksu",
+"k",
+"key",
+"kmb",
+"kim",
+"kmi",
+"klac",
+"kss",
+"khc",
+"kr",
+"lb",
+"lll",
+"lh",
+"lrcx",
+"leg",
+"len",
+"lly",
+"lnc",
+"lkq",
+"lmt",
+"l",
+"low",
+"lyb",
+"mtb",
+"mac",
+"m",
+"mro",
+"mpc",
+"mar",
+"mmc",
+"mlm",
+"mas",
+"ma",
+"mat",
+"mkc",
+"mcd",
+"mck",
+"mdt",
+"mrk",
+"met",
+"mtd",
+"mgm",
+"kors",
+"mchp",
+"mu",
+"msft",
+"maa",
+"mhk",
+"tap",
+"mdlz",
+"mnst",
+"mco",
+"ms",
+"mos",
+"msi",
+"msci",
+"myl",
+"ndaq",
+"nov",
+"nktr",
+"ntap",
+"nflx",
+"nwl",
+"nfx",
+"nem",
+"nwsa",
+"nws",
+"nee",
+"nlsn",
+"nke",
+"ni",
+"nbl",
+"jwn",
+"nsc",
+"ntrs",
+"noc",
+"nclh",
+"nrg",
+"nue",
+"nvda",
+"orly",
+"oxy",
+"omc",
+"oke",
+"orcl",
+"pcar",
+"pkg",
+"ph",
+"payx",
+"pypl",
+"pnr",
+"pbct",
+"pep",
+"pki",
+"prgo",
+"pfe",
+"pcg",
+"pm",
+"psx",
+"pnw",
+"pxd",
+"pnc",
+"rl",
+"ppg",
+"ppl",
+"px",
+"pfg",
+"pg",
+"pgr",
+"pld",
+"pru",
+"peg",
+"psa",
+"phm",
+"pvh",
+"qrvo",
+"pwr",
+"qcom",
+"dgx",
+"rjf",
+"rtn",
+"o",
+"rht",
+"reg",
+"regn",
+"rf",
+"rsg",
+"rmd",
+"rhi",
+"rok",
+"col",
+"rop",
+"rost",
+"rcl",
+"crm",
+"sbac",
+"scg",
+"slb",
+"stx",
+"see",
+"sre",
+"shw",
+"spg",
+"swks",
+"slg",
+"sna",
+"so",
+"luv",
+"spgi",
+"swk",
+"sbux",
+"stt",
+"srcl",
+"syk",
+"sti",
+"sivb",
+"symc",
+"syf",
+"snps",
+"syy",
+"trow",
+"ttwo",
+"tpr",
+"tgt",
+"tel",
+"fti",
+"txn",
+"txt",
+"tmo",
+"tif",
+"twtr",
+"tjx",
+"tmk",
+"tss",
+"tsco",
+"tdg",
+"trv",
+"trip",
+"foxa",
+"fox",
+"tsn",
+"udr",
+"ulta",
+"usb",
+"uaa",
+"ua",
+"unp",
+"ual",
+"unh",
+"ups",
+"uri",
+"utx",
+"uhs",
+"unm",
+"vfc",
+"vlo",
+"var",
+"vtr",
+"vrsn",
+"vrsk",
+"vz",
+"vrtx",
+"viab",
+"v",
+"vno",
+"vmc",
+"wmt",
+"wba",
+"dis",
+"wm",
+"wat",
+"wec",
+"wfc",
+"well",
+"wdc",
+"wu",
+"wrk",
+"wy",
+"whr",
+"wmb",
+"wltw",
+"wynn",
+"xel",
+"xrx",
+"xlnx",
+"xl",
+"xyl",
+"yum",
+"zbh",
+"zion",
+"zts"
+];
+
+//buttons
+document.getElementById("applyButton").addEventListener("click", function(){
+	var index = 0;
+	 var tempDataset = {
+        data: [10,10,10,10,10,10],
+        label: "placeholder",
+        borderColor: "#DCDCDD",
+        fill: false
+    }
+	for(i = 0; i < slider.value; i++){ 
+		index = Math.floor(Math.random() * 501);
+		fetch('https://api.iextrading.com/1.0/stock/' + tickers[index] + '/chart/5y')
+		  .then(function(response) {
+			return response.json();
+		  })
+		  .then(function(myJson) {
+			for(j = 1; j < 6; j++){
+				tempDataset.data[j] = (((myJson[j*251].close - myJson[(j - 1)*251].close) /  myJson[(j - 1)*251].close) + 1) * tempDataset.data[j - 1]; 
+			}
+			tempDataset.label = tickers[index];
+			console.log(tempDataset);
+			chart.data.datasets.push(tempDataset); 
+			chart.update();
+		});
+	}	
+	chart.update();
+});
+
+
+
+//slider
+slider.oninput = function() {
+  outputSlide.innerHTML = slider.value;
+}
+</script>
+<script>
+var chart = new Chart(document.getElementById("line-chart"), {
+  type: 'line',
+  data: {
+	//hardcoded years, to do
+    labels: [2013,2014,2015,2016,2017,2018],
+    datasets: [ { 
+        data: [10,10,10,10,10,10],
+        label: "S&P 500",
+        borderColor: "#1985A1",
+        fill: false
+      }
+    ]
+  },
+
+  options: {
+    title: {
+      display: true,
+      text: 'Investment value (in thousands)'
+    },
+	responsive: false
+  }
+});
+
+fetch('https://api.iextrading.com/1.0/stock/' + 'voo' + '/chart/5y')
+	  .then(function(response) {
+		return response.json();
+	  })
+	  .then(function(myJson) {
+		for(i = 1; i < 6; i++){
+		console.log(myJson[i*251]);
+			chart.data.datasets[0].data[i] = (((myJson[i*251].close - myJson[(i - 1)*251].close) /  myJson[(i - 1)*251].close) + 1) * chart.data.datasets[0].data[i - 1]; 
+			
+		}
+		chart.update();
+	  });
+
+
+	  
+</script>
+
+</body>
+</html>
